@@ -22,6 +22,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    GameWidget *keyWidget;
 };
 
 #endif // MAINWINDOW_H

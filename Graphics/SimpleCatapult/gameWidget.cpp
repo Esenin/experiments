@@ -16,9 +16,9 @@ GameWidget::GameWidget(QWidget *parent) :
     setMinimumSize(500, 300);
     setWindowTitle("Catapult");
 
-    GunMachine *catapult = new GunMachine;
+    catapult = new GunMachine;
     scene->addItem(catapult);
-    catapult->setPos(-200, -100);
+    catapult->setPos(-200, 100);
 
 }
 
@@ -55,7 +55,7 @@ void GameWidget::keyPressEvent(QKeyEvent *event)
     }
     case Qt::Key_Right:
     {
-        setAnglePlus(step);
+        setPowerPlus(step);
         break;
     }
     case Qt::Key_Space:
@@ -87,17 +87,17 @@ void GameWidget::drawBackground(QPainter *painter, const QRectF &rect)
 
 void GameWidget::setPowerPlus(int delta)
 {
-    if (powerRate + delta < 5 || powerRate + delta > 100)
+    if ((powerRate + delta < 5) || (powerRate + delta > 100))
         return;
-
-    emit powerChanged(delta);
     powerRate += delta;
+    emit powerChanged(powerRate);
 }
 
 void GameWidget::setAnglePlus(int delta)
 {
-    if (angleRate + delta < 5 || angleRate + delta > 85)
+    if ((angleRate + delta < 5) || (angleRate + delta > 85))
         return;
-    emit angleChanged(delta);
     angleRate += delta;
+    emit angleChanged(angleRate);
+    catapult->setCannonAngle(angleRate);
 }

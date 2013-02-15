@@ -16,8 +16,10 @@ public:
                const QStyleOptionGraphicsItem *option, QWidget *widget);
     void setCannonAngle(int angle);
 
+
 protected:
     int newAngle;
+    QRectF visualPlace;
 
 };
 

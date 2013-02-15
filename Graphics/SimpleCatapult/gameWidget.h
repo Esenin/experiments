@@ -27,6 +27,7 @@ protected:
     void shoot();
 
 private:
+    GunMachine *catapult;
     int timerIdentify;
     int powerRate;
     int angleRate;
