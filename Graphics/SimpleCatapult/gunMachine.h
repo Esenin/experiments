@@ -8,17 +8,12 @@ class GameWidget;
 
 class GunMachine : public QGraphicsItem
 {
-    ///Q_OBJECT
 public:
     GunMachine();
 
     QRectF boundingRect() const;
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-signals:
-    
-public slots:
     void setCannonAngle(int angle);
 
 protected:
