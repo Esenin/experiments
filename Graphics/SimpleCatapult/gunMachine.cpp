@@ -16,13 +16,15 @@ QRectF GunMachine::boundingRect() const
 void GunMachine::paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    ///Gun
     painter->save();
     painter->rotate(qreal(- newAngle));
     painter->setPen(Qt::SolidLine);
     painter->setBrush(Qt::black);
 
-    painter->drawRect(-5, -8, 30, 16);
+    painter->drawRect(-5, -8, 40, 10);
 
+    ///Base
     painter->restore();
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::darkBlue);

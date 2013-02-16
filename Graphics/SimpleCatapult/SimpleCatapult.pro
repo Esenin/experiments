@@ -13,10 +13,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainWindow.cpp \
     gunMachine.cpp \
-    gameWidget.cpp
+    gameWidget.cpp \
+    enemyFace.cpp \
+    stoneMissile.cpp
 
 HEADERS  += mainWindow.h \
     gunMachine.h \
-    gameWidget.h
+    gameWidget.h \
+    enemyFace.h \
+    stoneMissile.h
 
 FORMS    += mainWindow.ui

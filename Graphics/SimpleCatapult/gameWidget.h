@@ -4,18 +4,19 @@
 #include <QGraphicsView>
 #include <QtGui>
 #include "gunMachine.h"
+#include "enemyFace.h"
 
 class GameWidget : public QGraphicsView
 {
     Q_OBJECT
 public:
     GameWidget(QWidget *parent = 0);
+    ~GameWidget();
 
 signals:
     void powerChanged(int delta);
     void angleChanged(int delta);
     
-public slots:
     
 protected:
     void keyPressEvent(QKeyEvent *event);
@@ -24,13 +25,19 @@ protected:
 
     void setPowerPlus(int delta);
     void setAnglePlus(int delta);
+    bool inOwnArea(QPointF position);
+    void createEnemy();
+    void startRound();
     void shoot();
 
 private:
+    QGraphicsScene *scene;
     GunMachine *catapult;
+    EnemyFace *enemy;
     int timerIdentify;
     int powerRate;
     int angleRate;
+    bool readyToFire;
 };
 
 #endif // GAMEWIDGET_H

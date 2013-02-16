@@ -1,25 +1,22 @@
-#ifndef GUNMACHINE_H
-#define GUNMACHINE_H
+#ifndef STONEMISSILE_H
+#define STONEMISSILE_H
 
 #include <QGraphicsItem>
 #include <QPainter>
 
-
-class GunMachine : public QGraphicsItem
+class StoneMissile : public QGraphicsItem
 {
 public:
-    GunMachine();
+    StoneMissile();
 
     QRectF boundingRect() const;
+    QPainterPath shape() const;
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void setCannonAngle(int angle);
-
 
 protected:
-    int newAngle;
     QRectF visualPlace;
-
+    QRectF nuclearPayload;
 };
 
-#endif // GUNMACHINE_H
+#endif // STONEMISSILE_H

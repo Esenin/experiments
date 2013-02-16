@@ -18,7 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    delete keyWidget;
+    delete ui;    
 }
 
 void MainWindow::on_actionExit_triggered()
