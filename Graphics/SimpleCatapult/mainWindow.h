@@ -16,9 +16,9 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    
-private slots:
-    void on_actionExit_triggered();
+
+public slots:
+    void updateDisplayInfo(int timer, int hits, int shotsCount);
 
 private:
     Ui::MainWindow *ui;

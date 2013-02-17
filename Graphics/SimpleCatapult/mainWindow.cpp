@@ -12,9 +12,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainLayout->addWidget(keyWidget);
     connect(keyWidget, SIGNAL(powerChanged(int)), ui->lcdNumber, SLOT(display(int)));
     connect(keyWidget, SIGNAL(angleChanged(int)), ui->progressBar, SLOT(setValue(int)));
-
+    connect(keyWidget, SIGNAL(updateInfo(int,int,int)),
+            this, SLOT(updateDisplayInfo(int,int,int)));
+    connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
+    connect(ui->pushButtonRestart, SIGNAL(clicked()),
+            keyWidget, SLOT(startGameSession()));
+    connect(ui->pushButtonRestart, SIGNAL(clicked()),
+            keyWidget, SLOT(setFocus()));
 
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -22,7 +29,10 @@ MainWindow::~MainWindow()
     delete ui;    
 }
 
-void MainWindow::on_actionExit_triggered()
+void MainWindow::updateDisplayInfo(int timer, int hits, int shotsCount)
 {
-    this->close();
+    ui->lcdNumberTimer->display(timer);
+    ui->lcdNumberHitsCount->display(hits);
+    ui->lcdNumberShotsCount->display(shotsCount);
 }
+

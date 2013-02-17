@@ -1,8 +1,8 @@
 #include "stoneMissile.h"
 
 StoneMissile::StoneMissile() :
-    visualPlace(QRectF(-15, -15, 30, 30)),
-    nuclearPayload(QRectF(-7, -7, 14, 14))
+    visualPlace(QRectF(-16, -16, 32, 32)),
+    nuclearPayload(QRectF(-8, -8, 16, 16))
 {
     //setFlag(ItemIsMovable);
     setCacheMode(DeviceCoordinateCache);
@@ -24,16 +24,24 @@ QPainterPath StoneMissile::shape() const
 void StoneMissile::paint(QPainter *painter,
                          const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-//    painter->save();
-//    QPolygon
-//    for (int i = 0; i < 4; i++)
-//    {
+    QPolygon knife;
+    knife.push_back(QPoint(0, 0));
+    knife.push_back(QPoint(12, -16));
+    knife.push_back(QPoint(0, -8));
 
-//    }
+    painter->save();
+    painter->setBrush(Qt::red);
+    painter->setPen(Qt::NoPen);
 
+    for (int i = 0; i < 4; i++)
+    {
+        painter->drawPolygon(knife);
+        painter->rotate(90);
+    }
 
     //skin
     painter->restore();
     painter->setBrush(Qt::black);
+    painter->setPen(QPen(Qt::darkGray, 2));
     painter->drawEllipse(nuclearPayload);
 }

@@ -2,10 +2,28 @@
 
 GameWidget::GameWidget(QWidget *parent) :
     QGraphicsView(parent),
-    timerIdentify(0),
+    enemy(NULL),
+    missile(NULL),
+    catapultPosition(QPoint(-200, 100)),
+    fps(42),
     powerRate(50),
-    angleRate(45),
-    readyToFire(true)
+    angleRate(45)
+{
+    initGraphicOutput();
+
+    connect(&gameTimer, SIGNAL(timeout()), this, SLOT(gameTimerEvent()));
+    connect(&visualTimerDEBUG, SIGNAL(timeout()), this, SLOT(visualTimerEvent()));
+
+    startGameSession();
+}
+
+GameWidget::~GameWidget()
+{
+    delete catapult;
+    delete scene;
+}
+
+void GameWidget::initGraphicOutput()
 {
     scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -19,40 +37,50 @@ GameWidget::GameWidget(QWidget *parent) :
 
     catapult = new GunMachine;
     scene->addItem(catapult);
-    catapult->setPos(-200, 100);
-
-
-    startRound();
+    catapult->setPos(catapultPosition);
 }
 
-GameWidget::~GameWidget()
+void GameWidget::startGameSession()
 {
-    delete catapult;
-    delete scene;
+    shotsCount = 0;
+    hitsCount = 0;
+    currentTime = 30;
+
+    startNewRound();
+
+    gameTimer.start(999);
 }
 
-void GameWidget::startRound()
+void GameWidget::startNewRound()
 {
     createEnemy();
 
-    const int timerFree = 0;
-    const int fps = 42;
-    if (timerIdentify == timerFree)
-        timerIdentify = startTimer(fps);
-
+    recoveryTimeRemaining = 0;
+    visualTimerDEBUG.start(fps);
 
     readyToFire = true;
+    recoveryTimeRemaining = 0;
 }
 
 void GameWidget::shoot()
 {
+    if (!readyToFire)
+        return;
 
+    missile = new StoneMissile;
+    scene->addItem(missile);
+    missile->setPos(catapultPosition + catapult->getBulletExitPoint());
 
-    //create stone here
+    readyToFire = false;
+    energy = float(powerRate) / 100;
+    shotsCount++;
 }
 
 void GameWidget::createEnemy()
 {
+    if (enemy != NULL)
+        return;
+
     const int leftLimit = 0;
     const int topLimit = -130;
     int newX = leftLimit + (rand() % 150);
@@ -60,6 +88,15 @@ void GameWidget::createEnemy()
     enemy = new EnemyFace;
     scene->addItem(enemy);
     enemy->setPos(newX, newY);
+}
+
+void GameWidget::destroyItem(QGraphicsItem *element)
+{
+    if (element == NULL)
+        return;
+
+    delete element;
+    element = NULL;
 }
 
 void GameWidget::keyPressEvent(QKeyEvent *event)
@@ -106,9 +143,47 @@ bool GameWidget::inOwnArea(QPointF position)
     return (position.x() >= left && position.x() <= right) && (position.y() >= top && position.y() <= bottom);
 }
 
-void GameWidget::timerEvent(QTimerEvent *)
+void GameWidget::setNextMissilePos()
 {
-    // !!!
+    const qreal rotateAngle = 15;
+    const qreal gravity = -10;
+    if (missile == NULL)
+        return;
+
+    QPointF shift = QPointF(catapult->getBulletExitPoint().x() * energy,
+                            catapult->getBulletExitPoint().y() * energy);
+    missile->setPos(missile->pos() + shift);
+    missile->rotate(rotateAngle);
+
+    if (missile->pos().x() > scene->sceneRect().right() || missile->pos().y() > scene->sceneRect().bottom())
+    {
+        destroyItem(missile);
+        readyToFire = true;
+        return;
+    }
+
+    checkForKill();
+
+}
+
+
+void GameWidget::checkForKill()
+{
+    if (missile->collidesWithItem(enemy))
+    {
+        visualTimerDEBUG.stop();
+        destroyItem(missile);
+        destroyItem(enemy);
+        recoveryTimeRemaining = 2;
+        hitsCount++;
+    }
+}
+
+void GameWidget::setNextEmemyPos()
+{
+    if (enemy == NULL)
+        return;
+
     QPointF newShift = enemy->getNextTranslation();
     QPointF newPos = enemy->pos() + newShift;
     if (!inOwnArea(newPos))
@@ -117,8 +192,35 @@ void GameWidget::timerEvent(QTimerEvent *)
         enemy->runIntoWall();
     }
 
-    //if (inOwnArea(newPos))  unnecessary
     enemy->setPos(newPos);
+}
+
+void GameWidget::visualTimerEvent()
+{
+    if (enemy == NULL)
+        return;
+
+    setNextEmemyPos();
+    setNextMissilePos();
+
+}
+
+void GameWidget::gameTimerEvent()
+{
+    currentTime--;
+    emit updateInfo(currentTime, hitsCount, shotsCount);
+
+    if (currentTime < 0)
+    {
+        visualTimerDEBUG.stop();
+        destroyItem(enemy);
+        gameTimer.stop();
+    }
+
+    if (--recoveryTimeRemaining == 0)
+    {
+        startNewRound();
+    }
 
 }
 

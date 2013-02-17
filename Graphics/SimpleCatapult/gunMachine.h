@@ -3,6 +3,7 @@
 
 #include <QGraphicsItem>
 #include <QPainter>
+#include <math.h>
 
 
 class GunMachine : public QGraphicsItem
@@ -15,10 +16,13 @@ public:
                const QStyleOptionGraphicsItem *option, QWidget *widget);
     void setCannonAngle(int angle);
 
+    QPoint getBulletExitPoint();
+
 
 protected:
     int newAngle;
     QRectF visualPlace;
+    QPoint bulletExitPoint;
 
 };
 

@@ -24,6 +24,13 @@ void GunMachine::paint(QPainter *painter,
 
     painter->drawRect(-5, -8, 40, 10);
 
+    ///Calc bullet exit point
+    const qreal pi = 3.1415;
+    qreal inRadianAngle = (pi * (- newAngle)) /180;
+
+    bulletExitPoint.setX(int(45 * cos(inRadianAngle)));
+    bulletExitPoint.setY(int(45 * sin(inRadianAngle)));
+
     ///Base
     painter->restore();
     painter->setPen(Qt::NoPen);
@@ -45,4 +52,10 @@ void GunMachine::setCannonAngle(int angle)
 {
     newAngle = angle;
     this->update();
+}
+
+
+QPoint GunMachine::getBulletExitPoint()
+{
+    return bulletExitPoint;
 }

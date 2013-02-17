@@ -59,13 +59,13 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>11</pointsize>
          <stylestrategy>PreferDefault</stylestrategy>
          <kerning>false</kerning>
         </font>
        </property>
        <property name="title">
-        <string>Gun state</string>
+        <string>Game state</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -75,11 +75,11 @@
          <rect>
           <x>10</x>
           <y>20</y>
-          <width>301</width>
-          <height>101</height>
+          <width>493</width>
+          <height>107</height>
          </rect>
         </property>
-        <layout class="QGridLayout" name="gridLayout" rowstretch="0" rowminimumheight="0">
+        <layout class="QGridLayout" name="gridLayout" rowstretch="0">
          <property name="leftMargin">
           <number>5</number>
          </property>
@@ -108,8 +108,15 @@
                <height>20</height>
               </size>
              </property>
+             <property name="maximumSize">
+              <size>
+               <width>50</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="text">
-              <string>Gun Angle:</string>
+              <string>Gun 
+ angle:</string>
              </property>
             </widget>
            </item>
@@ -160,7 +167,8 @@
               </size>
              </property>
              <property name="text">
-              <string>Gun Power:</string>
+              <string>Gun 
+ Power:</string>
              </property>
             </widget>
            </item>
@@ -190,6 +198,133 @@
              <property name="value" stdset="0">
               <double>50.000000000000000</double>
              </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBoxStat">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>270</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="title">
+              <string>Statistics</string>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+             <widget class="QPushButton" name="pushButtonRestart">
+              <property name="geometry">
+               <rect>
+                <x>180</x>
+                <y>20</y>
+                <width>75</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Restart</string>
+              </property>
+             </widget>
+             <widget class="QWidget" name="">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>20</y>
+                <width>159</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Time remaining:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLCDNumber" name="lcdNumberTimer">
+                 <property name="smallDecimalPoint">
+                  <bool>false</bool>
+                 </property>
+                 <property name="numDigits">
+                  <number>3</number>
+                 </property>
+                 <property name="segmentStyle">
+                  <enum>QLCDNumber::Flat</enum>
+                 </property>
+                 <property name="value" stdset="0">
+                  <double>0.000000000000000</double>
+                 </property>
+                 <property name="intValue" stdset="0">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>50</y>
+                <width>236</width>
+                <height>25</height>
+               </rect>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Hits:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLCDNumber" name="lcdNumberHitsCount">
+                 <property name="digitCount">
+                  <number>3</number>
+                 </property>
+                 <property name="segmentStyle">
+                  <enum>QLCDNumber::Flat</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>Shot count:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLCDNumber" name="lcdNumberShotsCount">
+                 <property name="digitCount">
+                  <number>3</number>
+                 </property>
+                 <property name="segmentStyle">
+                  <enum>QLCDNumber::Flat</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
           </layout>
@@ -222,9 +357,6 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::QuitRole</enum>
    </property>
   </action>
  </widget>
