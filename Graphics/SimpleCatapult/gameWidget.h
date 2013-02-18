@@ -19,7 +19,6 @@ public:
 public slots:
     void startGameSession();
 
-
 signals:
     void powerChanged(int delta);
     void angleChanged(int delta);
@@ -31,8 +30,8 @@ protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
 
     void startNewRound();
-    void destroyItem(QGraphicsItem *element);
-    void initGraphicOutput();
+    void makeGameOver();
+    void initGraphicsOutput();
     void checkForKill();
     void setNextMissilePos();
     void setNextEmemyPos();
@@ -44,13 +43,16 @@ protected:
 
 private:
     QGraphicsScene *scene;
+    QGraphicsTextItem *gameOverMessage;
+    QGraphicsTextItem *infoMessage;
     QTimer gameTimer;
-    QTimer visualTimerDEBUG;
+    QTimer visualTimer;
     GunMachine *catapult;
     EnemyFace *enemy;
     StoneMissile *missile;
     qreal energy;
     QPoint catapultPosition;
+    QPointF missileSpeedVector;
     const int fps;
     int recoveryTimeRemaining;
     int powerRate;
@@ -64,7 +66,6 @@ private:
 private slots:
     void gameTimerEvent();
     void visualTimerEvent();
-
 };
 
 #endif // GAMEWIDGET_H

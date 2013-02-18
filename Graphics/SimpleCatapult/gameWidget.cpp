@@ -2,28 +2,30 @@
 
 GameWidget::GameWidget(QWidget *parent) :
     QGraphicsView(parent),
-    enemy(NULL),
-    missile(NULL),
     catapultPosition(QPoint(-200, 100)),
     fps(42),
     powerRate(50),
     angleRate(45)
 {
-    initGraphicOutput();
+    initGraphicsOutput();
 
     connect(&gameTimer, SIGNAL(timeout()), this, SLOT(gameTimerEvent()));
-    connect(&visualTimerDEBUG, SIGNAL(timeout()), this, SLOT(visualTimerEvent()));
+    connect(&visualTimer, SIGNAL(timeout()), this, SLOT(visualTimerEvent()));
 
     startGameSession();
 }
 
 GameWidget::~GameWidget()
 {
+    delete missile;
+    delete enemy;
     delete catapult;
-    delete scene;
+    delete infoMessage;
+    delete gameOverMessage;
+    delete scene;    
 }
 
-void GameWidget::initGraphicOutput()
+void GameWidget::initGraphicsOutput()
 {
     scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -38,13 +40,31 @@ void GameWidget::initGraphicOutput()
     catapult = new GunMachine;
     scene->addItem(catapult);
     catapult->setPos(catapultPosition);
+
+    gameOverMessage = new QGraphicsTextItem("Game Over! \nYou can restart game");
+    gameOverMessage->setFont(QFont("Arial"));
+
+    QString helpInfo = QString("Control:\n Left-right arrows to change gun power\n") +
+            QString(" Up-down to change gun angle\n And spacebar to shoot\n 'God' Luck!");
+    infoMessage = new QGraphicsTextItem(helpInfo);
+    infoMessage->setFont(QFont("Arial", 10));
+    scene->addItem(infoMessage);
+    infoMessage->setPos(scene->sceneRect().topLeft());
+
+    missile = new StoneMissile;
+    enemy = new EnemyFace;
 }
 
 void GameWidget::startGameSession()
 {
     shotsCount = 0;
     hitsCount = 0;
-    currentTime = 30;
+    currentTime = 40;
+    if (scene->items().contains(missile))
+        scene->removeItem(missile);
+
+    if (scene->items().contains(gameOverMessage))
+        scene->removeItem(gameOverMessage);
 
     startNewRound();
 
@@ -56,48 +76,42 @@ void GameWidget::startNewRound()
     createEnemy();
 
     recoveryTimeRemaining = 0;
-    visualTimerDEBUG.start(fps);
+    visualTimer.start(fps);
 
     readyToFire = true;
-    recoveryTimeRemaining = 0;
 }
 
 void GameWidget::shoot()
 {
-    if (!readyToFire)
+    if (!readyToFire || !gameTimer.isActive())
         return;
+    const qreal horozontSpeedBooster = 1.1;
 
-    missile = new StoneMissile;
     scene->addItem(missile);
     missile->setPos(catapultPosition + catapult->getBulletExitPoint());
 
-    readyToFire = false;
     energy = float(powerRate) / 100;
+    missileSpeedVector =
+            QPointF(catapult->getBulletExitPoint().x() * (energy * horozontSpeedBooster),
+                    catapult->getBulletExitPoint().y() * energy);
+
+    readyToFire = false;
     shotsCount++;
 }
 
 void GameWidget::createEnemy()
 {
-    if (enemy != NULL)
+    if (scene->items().contains(enemy))
         return;
 
     const int leftLimit = 0;
     const int topLimit = -130;
-    int newX = leftLimit + (rand() % 150);
-    int newY = topLimit + (rand() % 250);
-    enemy = new EnemyFace;
+    int newX = leftLimit + (rand() % 200);
+    int newY = topLimit + (rand() % 200);
     scene->addItem(enemy);
     enemy->setPos(newX, newY);
 }
 
-void GameWidget::destroyItem(QGraphicsItem *element)
-{
-    if (element == NULL)
-        return;
-
-    delete element;
-    element = NULL;
-}
 
 void GameWidget::keyPressEvent(QKeyEvent *event)
 {
@@ -137,51 +151,47 @@ void GameWidget::keyPressEvent(QKeyEvent *event)
 bool GameWidget::inOwnArea(QPointF position)
 {
     const int left = 0;
-    const int top = -130;
-    const int right = 220;
-    const int bottom = 100;
+    const int top = int(scene->sceneRect().top());
+    const int right = int(scene->sceneRect().right()) - 50;
+    const int bottom = int(scene->sceneRect().bottom() -50);
     return (position.x() >= left && position.x() <= right) && (position.y() >= top && position.y() <= bottom);
 }
-
-void GameWidget::setNextMissilePos()
-{
-    const qreal rotateAngle = 15;
-    const qreal gravity = -10;
-    if (missile == NULL)
-        return;
-
-    QPointF shift = QPointF(catapult->getBulletExitPoint().x() * energy,
-                            catapult->getBulletExitPoint().y() * energy);
-    missile->setPos(missile->pos() + shift);
-    missile->rotate(rotateAngle);
-
-    if (missile->pos().x() > scene->sceneRect().right() || missile->pos().y() > scene->sceneRect().bottom())
-    {
-        destroyItem(missile);
-        readyToFire = true;
-        return;
-    }
-
-    checkForKill();
-
-}
-
 
 void GameWidget::checkForKill()
 {
     if (missile->collidesWithItem(enemy))
     {
-        visualTimerDEBUG.stop();
-        destroyItem(missile);
-        destroyItem(enemy);
-        recoveryTimeRemaining = 2;
+        visualTimer.stop();
+        scene->removeItem(missile);
+        scene->removeItem(enemy);
+        recoveryTimeRemaining = 1;
         hitsCount++;
     }
 }
 
+void GameWidget::setNextMissilePos()
+{
+    const qreal rotateAngle = 15;
+    const qreal gravity = 2;
+    if (!scene->items().contains(missile))
+        return;
+
+    missileSpeedVector.setY(missileSpeedVector.y() + gravity);
+    missile->setPos(missile->pos() + missileSpeedVector);
+    missile->rotate(rotateAngle);
+
+    if (missile->pos().x() > scene->sceneRect().right() || missile->pos().y() > scene->sceneRect().bottom())
+    {
+        scene->removeItem(missile);
+        readyToFire = true;
+    }
+    else
+        checkForKill();
+}
+
 void GameWidget::setNextEmemyPos()
 {
-    if (enemy == NULL)
+    if (!scene->items().contains(enemy))
         return;
 
     QPointF newShift = enemy->getNextTranslation();
@@ -195,14 +205,14 @@ void GameWidget::setNextEmemyPos()
     enemy->setPos(newPos);
 }
 
+
 void GameWidget::visualTimerEvent()
 {
-    if (enemy == NULL)
+    if (!scene->items().contains(enemy))
         return;
 
     setNextEmemyPos();
     setNextMissilePos();
-
 }
 
 void GameWidget::gameTimerEvent()
@@ -210,18 +220,23 @@ void GameWidget::gameTimerEvent()
     currentTime--;
     emit updateInfo(currentTime, hitsCount, shotsCount);
 
-    if (currentTime < 0)
-    {
-        visualTimerDEBUG.stop();
-        destroyItem(enemy);
-        gameTimer.stop();
-    }
+    if (currentTime <= 0)
+        makeGameOver();
 
     if (--recoveryTimeRemaining == 0)
-    {
         startNewRound();
-    }
+}
 
+void GameWidget::makeGameOver()
+{
+    visualTimer.stop();
+    gameTimer.stop();
+
+    if (scene->items().contains(enemy))
+        enemy->setPos(catapult->getBulletExitPoint());
+
+    scene->addItem(gameOverMessage);
+    gameOverMessage->setPos(scene->sceneRect().center());
 }
 
 void GameWidget::drawBackground(QPainter *painter, const QRectF &rect)
@@ -232,12 +247,21 @@ void GameWidget::drawBackground(QPainter *painter, const QRectF &rect)
     gradient.setColorAt(1, Qt::darkGray);
     painter->fillRect(rect.intersect(sceneRect), gradient);
     painter->setBrush(Qt::NoBrush);
+    painter->setPen(Qt::NoPen);
     painter->drawRect(sceneRect);
+
+    QPointF leftBeach = QPointF(scene->sceneRect().left(), catapultPosition.y());
+    QRectF waterField = QRectF(leftBeach, sceneRect.bottomRight());
+    QLinearGradient waterGradient(waterField.topLeft(), waterField.bottomRight());
+    waterGradient.setColorAt(0, Qt::white);
+    waterGradient.setColorAt(1, Qt::darkBlue);
+    painter->fillRect(rect.intersect(waterField), waterGradient);
+    painter->drawRect(waterField);
 }
 
 void GameWidget::setPowerPlus(int delta)
 {
-    if ((powerRate + delta < 5) || (powerRate + delta > 100))
+    if ((powerRate + delta < 10) || (powerRate + delta > 100))
         return;
     powerRate += delta;
     emit powerChanged(powerRate);

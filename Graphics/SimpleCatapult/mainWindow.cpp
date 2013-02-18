@@ -7,25 +7,26 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    keyWidget = new GameWidget;
+    gameWidget = new GameWidget;
 
-    ui->mainLayout->addWidget(keyWidget);
-    connect(keyWidget, SIGNAL(powerChanged(int)), ui->lcdNumber, SLOT(display(int)));
-    connect(keyWidget, SIGNAL(angleChanged(int)), ui->progressBar, SLOT(setValue(int)));
-    connect(keyWidget, SIGNAL(updateInfo(int,int,int)),
+    ui->mainLayout->addWidget(gameWidget);
+    connect(gameWidget, SIGNAL(powerChanged(int)), ui->lcdNumber, SLOT(display(int)));
+    connect(gameWidget, SIGNAL(angleChanged(int)), ui->progressBar, SLOT(setValue(int)));
+    connect(gameWidget, SIGNAL(updateInfo(int,int,int)),
             this, SLOT(updateDisplayInfo(int,int,int)));
+
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->pushButtonRestart, SIGNAL(clicked()),
-            keyWidget, SLOT(startGameSession()));
+            gameWidget, SLOT(startGameSession()));
     connect(ui->pushButtonRestart, SIGNAL(clicked()),
-            keyWidget, SLOT(setFocus()));
+            gameWidget, SLOT(setFocus()));
 
 }
 
 
 MainWindow::~MainWindow()
 {
-    delete keyWidget;
+    delete gameWidget;
     delete ui;    
 }
 
@@ -35,4 +36,5 @@ void MainWindow::updateDisplayInfo(int timer, int hits, int shotsCount)
     ui->lcdNumberHitsCount->display(hits);
     ui->lcdNumberShotsCount->display(shotsCount);
 }
+
 

@@ -3,7 +3,6 @@
 EnemyFace::EnemyFace() :
     viewDirectionAngle(rand() % 360)
 {
-    //setFlag(ItemIsMovable);
     setCacheMode(ItemCoordinateCache);
     setZValue(-1);
     visualPlace = QRectF(-25, -25, 50, 50);

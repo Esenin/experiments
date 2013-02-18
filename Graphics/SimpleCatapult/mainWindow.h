@@ -5,8 +5,9 @@
 #include <QtGui>
 #include "gameWidget.h"
 
-namespace Ui {
-class MainWindow;
+namespace Ui
+{
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -22,7 +23,7 @@ public slots:
 
 private:
     Ui::MainWindow *ui;
-    GameWidget *keyWidget;
+    GameWidget *gameWidget;
 };
 
 #endif // MAINWINDOW_H
