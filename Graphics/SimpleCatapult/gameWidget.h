@@ -32,9 +32,11 @@ protected:
     void startNewRound();
     void makeGameOver();
     void initGraphicsOutput();
+    void createClouds();
     void checkForKill();
     void setNextMissilePos();
     void setNextEmemyPos();
+    void setNextCloudsPos();
     void setPowerPlus(int delta);
     void setAnglePlus(int delta);
     bool inOwnArea(QPointF position);
@@ -50,6 +52,7 @@ private:
     GunMachine *catapult;
     EnemyFace *enemy;
     StoneMissile *missile;
+    QList<QGraphicsPixmapItem *> cloudList;
     qreal energy;
     QPoint catapultPosition;
     QPointF missileSpeedVector;

@@ -5,7 +5,7 @@ GunMachine::GunMachine() :
 {
     setCacheMode(DeviceCoordinateCache);
     setZValue(-1);
-    visualPlace = QRectF(-30, -40, 100, 100);
+    visualPlace = QRectF(-50, -50, 100, 100);
 }
 
 QRectF GunMachine::boundingRect() const
@@ -16,7 +16,7 @@ QRectF GunMachine::boundingRect() const
 void GunMachine::paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    ///Gun
+    /// Gun
     painter->save();
     painter->rotate(qreal(- newAngle));
     painter->setPen(Qt::SolidLine);
@@ -24,14 +24,14 @@ void GunMachine::paint(QPainter *painter,
 
     painter->drawRect(-5, -8, 40, 10);
 
-    ///Calc bullet exit point
+    /// Calc bullet exit point
     const qreal pi = 3.1415;
     qreal inRadianAngle = (pi * (- newAngle)) /180;
 
     bulletExitPoint.setX(int(45 * cos(inRadianAngle)));
     bulletExitPoint.setY(int(45 * sin(inRadianAngle)));
 
-    ///Base
+    /// Base
     painter->restore();
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::darkBlue);
