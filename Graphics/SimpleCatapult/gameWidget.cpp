@@ -11,6 +11,7 @@ GameWidget::GameWidget(QWidget *parent) :
 
     connect(&gameTimer, SIGNAL(timeout()), this, SLOT(gameTimerEvent()));
     connect(&visualTimer, SIGNAL(timeout()), this, SLOT(visualTimerEvent()));
+    connect(&infinityClouds, SIGNAL(timeout()), this, SLOT(cloudsTimerEvent()));
 
     startGameSession();
 }
@@ -65,7 +66,7 @@ void GameWidget::initGraphicsOutput()
 
 void GameWidget::createClouds()
 {
-    const int cloudsCount = 7;
+    const int cloudsCount = 5;
     QImage stdCloud("cloud.png");
 
 
@@ -97,6 +98,7 @@ void GameWidget::startGameSession()
     startNewRound();
 
     gameTimer.start(999);
+    infinityClouds.start(fps);
 }
 
 void GameWidget::startNewRound()
@@ -255,6 +257,10 @@ void GameWidget::visualTimerEvent()
 
     setNextEmemyPos();
     setNextMissilePos();
+}
+
+void GameWidget::cloudsTimerEvent()
+{
     setNextCloudsPos();
 }
 
