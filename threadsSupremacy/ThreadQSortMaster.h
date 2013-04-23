@@ -5,12 +5,17 @@
 
 class ThreadQSortMaster : public Sorter
 {
+    Q_OBJECT
 public:
-    ThreadQSortMaster(int *array, int const &size, int const maxDeep = 3);
+    ThreadQSortMaster(int *array, const int &size, const int maxDeep);
     void sort();
 
-    bool wait();
+signals:
+    void sorted();
+private slots:
+    void threadFinished();
 private:
     ThreadQSort *sorter;
+    const QObject *listener;
 };
 

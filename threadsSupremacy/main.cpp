@@ -6,11 +6,14 @@
 #include "arrayMaster.h"
 #include "quickSorter.h"
 #include "ThreadQSortMaster.h"
+#include "researchWidget.h"
 
 int main(int argc, char *argv[])
 {
 
     QApplication application(argc, argv);
+    ResearchWidget window;
+    window.show();
 
     QTime commonTestTime(QTime::currentTime());
 
@@ -65,5 +68,5 @@ int main(int argc, char *argv[])
 
 
 
-    return 0;
+    return application.exec();
 }
