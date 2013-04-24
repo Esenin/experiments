@@ -2,6 +2,8 @@
 
 #include <QtGui/QWidget>
 #include <QtCore/QTime>
+#include <QtCore/QTimer>
+#include <QtCore/QDebug>
 
 #include "arrayMaster.h"
 #include "quickSorter.h"
@@ -22,15 +24,19 @@ public:
 protected slots:
     void sortFinished();
     void startSortTest();
+    void visualUpdaterEvent();
 
 protected:
-    void sortInit();
+    class BadArraySize {};
+
+    void sortInit() throw(BadArraySize);
     void startSort();
 
 private:
     Ui::ResearchWidget *ui;
     Sorter *sorter;
-    QTime startTime;
+    QTime sortStartTime;
     ArrayMaster *array;
+    QTimer visualUpdater;
 };
 

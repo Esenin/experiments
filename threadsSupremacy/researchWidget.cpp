@@ -8,6 +8,7 @@ ResearchWidget::ResearchWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->startBtn, SIGNAL(clicked()), this, SLOT(startSortTest()));
+    connect(&visualUpdater, SIGNAL(timeout()), this, SLOT(visualUpdaterEvent()));
 }
 
 ResearchWidget::~ResearchWidget()
@@ -17,25 +18,40 @@ ResearchWidget::~ResearchWidget()
 
 void ResearchWidget::sortFinished()
 {
-    ui->timeLcd->display(startTime.msecsTo(QTime::currentTime()));
+    visualUpdater.stop();
+    ui->timeLcd->display(sortStartTime.msecsTo(QTime::currentTime()));
+
+    qDebug() << "Sort results checking...";
     ui->sortVerifyCheckBox->setChecked(array->checkArray());
+
+    qDebug() << "Done!";
 
     delete sorter;
     delete array;
     disconnect(this, SLOT(sortFinished()));
+    ui->startBtn->setEnabled(true);
 }
 
 void ResearchWidget::startSortTest()
 {
+    ui->startBtn->setDisabled(true);
+    qDebug() << "Sort init...";
     sortInit();
+    visualUpdater.start(300);
+    qDebug() << "Sort Start";
     startSort();
 }
 
-void ResearchWidget::sortInit()
+void ResearchWidget::visualUpdaterEvent()
+{
+    ui->timeLcd->display(sortStartTime.msecsTo(QTime::currentTime()));
+}
+
+void ResearchWidget::sortInit() throw(BadArraySize)
 {
     int arrSize = ui->arrSizeEdit->text().toInt();
     if (!arrSize)
-        return;
+        throw BadArraySize();
 
     array = new ArrayMaster(arrSize);
     array->fillArrayRand();
@@ -44,11 +60,11 @@ void ResearchWidget::sortInit()
     else
         sorter = new ThreadQSortMaster(array->getArray(), arrSize, ui->threadCounterSpin->value());
 
-    connect();
+    QObject::connect(sorter, SIGNAL(sortFinished()), this, SLOT(sortFinished()));
 }
 
-ResearchWidget::startSort()
+void ResearchWidget::startSort()
 {
-    startTime = QTime::currentTime();
+    sortStartTime = QTime::currentTime();
     sorter->sort();
 }

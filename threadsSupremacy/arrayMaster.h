@@ -2,22 +2,22 @@
 
 #include <QtCore/qglobal.h>
 #include <QtCore/QTime>
-#include <QDebug>
-
-#include "rBTree.h"
+#include "quickSorter.h"
 
 
-//! @class ArrayMaster array host with specific operations group
+//! @class ArrayMaster array host with specific methods
 class ArrayMaster
 {
 public:
+    class EmptyArray {};
+
     explicit ArrayMaster(const int dimension);
     ~ArrayMaster();
 
     int* getArray() const;
 
-    //! checks array for incremantion and numbers safety
-    bool checkArray();
+    //! checks array for incremantion and numbers safety by comparing with valid model
+    bool checkArray() throw (EmptyArray);
 
     //! also saves array state
     void fillArrayRand();
@@ -25,15 +25,14 @@ public:
     const int size() const;
 
 protected:
-    class SortFailed{};
 
     //! saves count of every num for post-checking
-    void saveState(RBTree<int> &box, const bool checkSort = false) throw(SortFailed);
+    void prepareArrayForChecking();
 
 
 private:
     int *array;
     const int mSize;
-    RBTree<int> revision;
+    int *correctArray;
 };
 

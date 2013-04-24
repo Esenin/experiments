@@ -11,6 +11,7 @@ void QuickSorter::sort()
 {
     int const arrStart = 0;
     qSort(insideArray, arrStart, arrSize - 1);
+    emit sortFinished();
 }
 
 void QuickSorter::qSort(int *array, int first, int last)

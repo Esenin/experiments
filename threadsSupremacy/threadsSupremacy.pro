@@ -24,7 +24,6 @@ HEADERS  += \
     quickSorter.h \
     threadQSort.h \
     ThreadQSortMaster.h \
-    rBTree.h \
     researchWidget.h
 
 FORMS    += \

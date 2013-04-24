@@ -9,7 +9,8 @@ ThreadQSort::ThreadQSort(int *array, const int &begin, const int &end, const int
       mEnd(end),
       mLevel(level),
       mMaxDeep(maxDeep),
-      leftBranch(NULL)
+      leftBranch(NULL),
+      rightBranch(NULL)
 {
 }
 
@@ -22,6 +23,10 @@ ThreadQSort::~ThreadQSort()
 void ThreadQSort::run()
 {
     tQSort(mArray, mBegin, mEnd);
+    if (leftBranch)
+        while (!leftBranch->wait());
+    if (rightBranch)
+        while (!rightBranch->wait());
 }
 
 void ThreadQSort::tQSort(int *array, int first, int last)
@@ -63,13 +68,12 @@ bool ThreadQSort::startNewThreadSuccess(const int &left, const int &right)
     if (!leftBranch)
     {
         leftBranch = newBranch;
-        leftBranch->start(HighPriority);
+        leftBranch->start(NormalPriority);
     }
     else
     {
-        newBranch->start(HighPriority);
-        while (!newBranch->wait());
-        delete newBranch;
+        rightBranch = newBranch;
+        rightBranch->start(NormalPriority);
     }
     return true;
 }

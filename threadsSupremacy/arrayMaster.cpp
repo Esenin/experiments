@@ -1,8 +1,8 @@
 #include "arrayMaster.h"
 
-
 ArrayMaster::ArrayMaster(const int dimension)
-    : mSize(dimension)
+    : mSize(dimension),
+      correctArray(NULL)
 {
     array = new int[mSize];
 }
@@ -10,7 +10,9 @@ ArrayMaster::ArrayMaster(const int dimension)
 ArrayMaster::~ArrayMaster()
 {
     if (array)
-        delete array;
+        delete[] array;
+    if (correctArray)
+        delete[] correctArray;
 }
 
 int *ArrayMaster::getArray() const
@@ -18,39 +20,24 @@ int *ArrayMaster::getArray() const
     return array;
 }
 
-bool ArrayMaster::checkArray()
+bool ArrayMaster::checkArray() throw(EmptyArray)
 {
-    RBTree<int> current;
-    try
-    {
-        saveState(current, true);
-        qDebug() << "state saved";
-    }
-    catch(SortFailed const &)
-    {
-        return false;
-    }
-
-    if (current.size() != revision.size())
-        return false;
-
-    for (RBTree<int>::ConstIterator iterator(revision); !iterator.end(); iterator++)
-    {
-        if (current.exists(iterator.current().first) != iterator.current().second)
+    if (!correctArray)
+        throw EmptyArray();
+    for (int i = 0; i < mSize; i++)
+        if (array[i] != correctArray[i])
             return false;
-    }
-
     return true;
 }
 
 void ArrayMaster::fillArrayRand()
 {
     const int randMax = 30042013;
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+    //qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     for (int i = 0; i < mSize; i++)
-        array[i] = qrand() % randMax;
+        array[i] = rand() % randMax;
 
-    saveState(revision);
+    prepareArrayForChecking();
 }
 
 const int ArrayMaster::size() const
@@ -58,17 +45,12 @@ const int ArrayMaster::size() const
     return mSize;
 }
 
-void ArrayMaster::saveState(RBTree<int> &box, const bool checkSort) throw(SortFailed)
+void ArrayMaster::prepareArrayForChecking()
 {
+    if (!correctArray)
+        correctArray = new int[mSize];
     for (int i = 0; i < mSize; i++)
-    {
-        box.add(array[i]);
-
-        if (checkSort && i > 0)
-        {
-            if (array[i] < array[i - 1])
-                throw SortFailed();
-        }
-    }
-
+        correctArray[i] = array[i];
+    QuickSorter validSorter(correctArray, mSize);
+    validSorter.sort();
 }
