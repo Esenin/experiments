@@ -9,6 +9,7 @@ ResearchWidget::ResearchWidget(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->startBtn, SIGNAL(clicked()), this, SLOT(startSortTest()));
     connect(&visualUpdater, SIGNAL(timeout()), this, SLOT(visualUpdaterEvent()));
+    connect(ui->threadCounterSpin, SIGNAL(valueChanged(int)), SLOT(threadsCountChanged(int)));
 }
 
 ResearchWidget::~ResearchWidget()
@@ -45,6 +46,11 @@ void ResearchWidget::startSortTest()
 void ResearchWidget::visualUpdaterEvent()
 {
     ui->timeLcd->display(sortStartTime.msecsTo(QTime::currentTime()));
+}
+
+void ResearchWidget::threadsCountChanged(const int &newLevel)
+{
+    ui->label->setText("Threads count: 2^(" + QString::number(newLevel + 1) + ") - 1");
 }
 
 void ResearchWidget::sortInit() throw(BadArraySize)

@@ -25,6 +25,7 @@ protected slots:
     void sortFinished();
     void startSortTest();
     void visualUpdaterEvent();
+    void threadsCountChanged(const int &newLevel);
 
 protected:
     class BadArraySize {};
