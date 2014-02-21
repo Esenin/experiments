@@ -22,7 +22,7 @@
      <bold>true</bold>
     </font>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -56,7 +56,7 @@
          <number>2000</number>
         </property>
         <property name="maximum">
-         <number>1000000</number>
+         <number>10000000</number>
         </property>
         <property name="value">
          <number>50000</number>
@@ -73,9 +73,9 @@
         <property name="geometry">
          <rect>
           <x>40</x>
-          <y>50</y>
+          <y>30</y>
           <width>461</width>
-          <height>81</height>
+          <height>51</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -85,13 +85,39 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>4000</string>
+         <string>1000</string>
         </property>
         <property name="maxLength">
          <number>5</number>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="leakLabel">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>140</y>
+          <width>461</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Leaked: 0</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="ticLeakLabel">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>110</y>
+          <width>471</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Leaks per tic: 0</string>
         </property>
        </widget>
       </widget>
@@ -101,7 +127,7 @@
        <property name="title">
         <string>Control</string>
        </property>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>10</x>

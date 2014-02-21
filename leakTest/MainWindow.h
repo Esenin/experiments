@@ -23,6 +23,7 @@ private slots:
 
 private:
 	Ui::MainWindow *ui;
-	QTimer leakTimer;
+	QTimer mLeakTimer;
+	double mLeaked; // [x	Mb]
 };
 
